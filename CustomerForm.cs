@@ -74,8 +74,8 @@ namespace SchedulingApp
             if (string.IsNullOrWhiteSpace(txtAddress.Text))
                 throw new Exception("Address is required");
 
-            if (!Regex.IsMatch(txtPhone.Text.Trim(), @"^\d{3}-\d{3}-\d{4}$"))
-                throw new Exception("Phone number must be in format: XXX-XXX-XXXX");
+            if (!Regex.IsMatch(txtPhone.Text.Trim(), @"^\d{3}-\d{4}$"))
+                throw new Exception("Phone number must be in format: XXX-XXXX");
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
@@ -91,22 +91,37 @@ namespace SchedulingApp
                         try
                         {
                             // Add address first
-                            var addressCmd = new MySqlCommand(@"
-                                INSERT INTO address (address, phone, createDate, createdBy)
-                                VALUES (@address, @phone, NOW(), 'test');
-                                SELECT LAST_INSERT_ID();", conn);
+                            string insertAddressSQL = @"
+                                INSERT INTO address (address, address2, cityId, postalCode, phone, createDate, createdBy, lastUpdate, lastUpdateBy)
+                                VALUES (@address, '', @cityId, @postalCode, @phone, NOW(), @createdBy, NOW() @lastUpdateBy)";
 
+                            var addressCmd = new MySqlCommand(insertAddressSQL, conn);
                             addressCmd.Parameters.AddWithValue("@address", txtAddress.Text.Trim());
+                            // addressCmd.Parameters.AddWithValue("@address2", "test");
+                            addressCmd.Parameters.AddWithValue("@cityId", 1);
+                            addressCmd.Parameters.AddWithValue("@postalCode", "00000");
                             addressCmd.Parameters.AddWithValue("@phone", txtPhone.Text.Trim());
-                            int addressId = Convert.ToInt32(addressCmd.ExecuteScalar());
+                            addressCmd.Parameters.AddWithValue("@createdBy", "test");
+                            addressCmd.Parameters.AddWithValue("@lastUpdateBy", "test");
+
+                            addressCmd.ExecuteNonQuery();
+
+                            // Get the last inserted ID
+                            var lastIdCmd = new MySqlCommand("SELECT LAST_INSERT_ID()", conn);
+                            int addressId = Convert.ToInt32(lastIdCmd.ExecuteScalar());
 
                             // Then add customer
-                            var customerCmd = new MySqlCommand(@"
-                                INSERT INTO customer (customerName, addressId, active, createDate, createdBy)
-                                VALUES (@name, @addressId, 1, NOW(), 'test')", conn);
+                            string insertCustomerSQL = @"
+                                INSERT INTO customer (customerName, addressId, active, createDate, createdBy, lastUpdate, lastUpdateBy)
+                                VALUES (@customerName, @addressId, @active, NOW(), @createdBy, NOW(), @lastUpdaeBy)";
 
-                            customerCmd.Parameters.AddWithValue("@name", txtName.Text.Trim());
+                            var customerCmd = new MySqlCommand(insertCustomerSQL, conn);
+                            customerCmd.Parameters.AddWithValue("@customerName", txtName.Text.Trim());
                             customerCmd.Parameters.AddWithValue("@addressId", addressId);
+                            customerCmd.Parameters.AddWithValue("@active", true);
+                            customerCmd.Parameters.AddWithValue("@createdBy", "test");
+                            customerCmd.Parameters.AddWithValue("@lastUpdateBy", "test");
+
                             customerCmd.ExecuteNonQuery();
 
                             transaction.Commit();
@@ -152,7 +167,7 @@ namespace SchedulingApp
                                 SET address = @address, 
                                     phone = @phone,
                                     lastUpdate = NOW(),
-                                    lastUpdateBy = 'test'
+                                    lastUpdateBy = @user
                                 WHERE addressId = @addressId", conn);
 
                             addressCmd.Parameters.AddWithValue("@address", txtAddress.Text.Trim());
@@ -165,7 +180,7 @@ namespace SchedulingApp
                                 UPDATE customer 
                                 SET customerName = @name,
                                     lastUpdate = NOW(),
-                                    lastUpdateBy = 'test'
+                                    lastUpdateBy = @user
                                 WHERE customerId = @customerId", conn);
 
                             customerCmd.Parameters.AddWithValue("@name", txtName.Text.Trim());
