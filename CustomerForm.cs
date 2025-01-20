@@ -93,7 +93,7 @@ namespace SchedulingApp
                             // Add address first
                             string insertAddressSQL = @"
                                 INSERT INTO address (address, address2, cityId, postalCode, phone, createDate, createdBy, lastUpdate, lastUpdateBy)
-                                VALUES (@address, '', @cityId, @postalCode, @phone, NOW(), @createdBy, NOW() @lastUpdateBy)";
+                                VALUES (@address, '', @cityId, @postalCode, @phone, NOW(), @createdBy, NOW(), @lastUpdateBy)";
 
                             var addressCmd = new MySqlCommand(insertAddressSQL, conn);
                             addressCmd.Parameters.AddWithValue("@address", txtAddress.Text.Trim());
@@ -113,7 +113,7 @@ namespace SchedulingApp
                             // Then add customer
                             string insertCustomerSQL = @"
                                 INSERT INTO customer (customerName, addressId, active, createDate, createdBy, lastUpdate, lastUpdateBy)
-                                VALUES (@customerName, @addressId, @active, NOW(), @createdBy, NOW(), @lastUpdaeBy)";
+                                VALUES (@customerName, @addressId, @active, NOW(), @createdBy, NOW(), @lastUpdateBy)";
 
                             var customerCmd = new MySqlCommand(insertCustomerSQL, conn);
                             customerCmd.Parameters.AddWithValue("@customerName", txtName.Text.Trim());
@@ -162,29 +162,33 @@ namespace SchedulingApp
                         try
                         {
                             // Update address
-                            var addressCmd = new MySqlCommand(@"
+                            string updateAddressSQL = @"
                                 UPDATE address 
                                 SET address = @address, 
                                     phone = @phone,
                                     lastUpdate = NOW(),
-                                    lastUpdateBy = @user
-                                WHERE addressId = @addressId", conn);
+                                    lastUpdateBy = @addressUpdateBy
+                                WHERE addressId = @addressId";
 
+                            var addressCmd = new MySqlCommand(updateAddressSQL, conn);
                             addressCmd.Parameters.AddWithValue("@address", txtAddress.Text.Trim());
                             addressCmd.Parameters.AddWithValue("@phone", txtPhone.Text.Trim());
                             addressCmd.Parameters.AddWithValue("@addressId", selectedCustomer.AddressId);
+                            addressCmd.Parameters.AddWithValue("@addressUpdateBy", "test");
                             addressCmd.ExecuteNonQuery();
 
                             // Update customer
-                            var customerCmd = new MySqlCommand(@"
+                            string updateCustomerSQL = @"
                                 UPDATE customer 
                                 SET customerName = @name,
                                     lastUpdate = NOW(),
-                                    lastUpdateBy = @user
-                                WHERE customerId = @customerId", conn);
+                                    lastUpdateBy = @customerUpdateBy
+                                WHERE customerId = @customerId";
 
+                            var customerCmd = new MySqlCommand(updateCustomerSQL, conn);
                             customerCmd.Parameters.AddWithValue("@name", txtName.Text.Trim());
                             customerCmd.Parameters.AddWithValue("@customerId", selectedCustomer.CustomerId);
+                            addressCmd.Parameters.AddWithValue("@customerUpdateBy", "test");
                             customerCmd.ExecuteNonQuery();
 
                             transaction.Commit();
