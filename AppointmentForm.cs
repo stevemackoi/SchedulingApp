@@ -48,14 +48,17 @@ namespace SchedulingApp
                         {
                             while (reader.Read())
                             {
+                                DateTime utcStart = reader.GetDateTime("start");
+                                DateTime utcEnd = reader.GetDateTime("end");
+
                                 appointments.Add(new Appointment
                                 {
                                     AppointmentId = reader.GetInt32("appointmentId"),
                                     CustomerId = reader.GetInt32("customerId"),
                                     CustomerName = reader.GetString("customerName"),
                                     Type = reader.GetString("type"),
-                                    Start = reader.GetDateTime("start"),
-                                    End = reader.GetDateTime("end")
+                                    Start = TimeZoneInfo.ConvertTimeFromUtc(utcStart, TimeZoneInfo.Local),
+                                    End = TimeZoneInfo.ConvertTimeFromUtc(utcEnd, TimeZoneInfo.Local)
                                 });
                             }
                         }
@@ -156,11 +159,16 @@ namespace SchedulingApp
                 {
                     conn.Open();
                     using (var cmd = new MySqlCommand(@"
-                        INSERT INTO appointment (customerId, type, start, end, createDate, createdBy)
-                        VALUES (@customerId, @type, @start, @end, NOW(), 'test')", conn))
+                        INSERT INTO appointment (customerId, userId, title, description, location, contact, type, url, start, end, createDate, createdBy, lastUpdate, lastUpdateBy)
+                        VALUES (@customerId, 1, @title, @description, @location, @contact, @type, @url, @start, @end, NOW(), 'test', NOW(), 'test')", conn))
                     {
                         cmd.Parameters.AddWithValue("@customerId", customerId);
+                        cmd.Parameters.AddWithValue("@title", cboType.Text);
+                        cmd.Parameters.AddWithValue("@description", "");
+                        cmd.Parameters.AddWithValue("@location", "");
+                        cmd.Parameters.AddWithValue("@contact", "");
                         cmd.Parameters.AddWithValue("@type", cboType.Text);
+                        cmd.Parameters.AddWithValue("@url", "");
                         cmd.Parameters.AddWithValue("@start", startDate.ToUniversalTime());
                         cmd.Parameters.AddWithValue("@end", endDate.ToUniversalTime());
                         cmd.ExecuteNonQuery();
@@ -203,7 +211,13 @@ namespace SchedulingApp
                     using (var cmd = new MySqlCommand(@"
                         UPDATE appointment 
                         SET customerId = @customerId,
+                            userId = 1,
+                            title = @title,
+                            description = @description,
+                            location = @location,
+                            contact = @contact,
                             type = @type,
+                            url = @url,
                             start = @start,
                             end = @end,
                             lastUpdate = NOW(),
@@ -211,7 +225,12 @@ namespace SchedulingApp
                         WHERE appointmentId = @appointmentId", conn))
                     {
                         cmd.Parameters.AddWithValue("@customerId", customerId);
+                        cmd.Parameters.AddWithValue("@title", cboType.Text);
+                        cmd.Parameters.AddWithValue("@description", "");
+                        cmd.Parameters.AddWithValue("@location", "");
+                        cmd.Parameters.AddWithValue("@contact", "");
                         cmd.Parameters.AddWithValue("@type", cboType.Text);
+                        cmd.Parameters.AddWithValue("@url", "");
                         cmd.Parameters.AddWithValue("@start", startDate.ToUniversalTime());
                         cmd.Parameters.AddWithValue("@end", endDate.ToUniversalTime());
                         cmd.Parameters.AddWithValue("@appointmentId", selectedAppointment.AppointmentId);

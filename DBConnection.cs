@@ -8,8 +8,8 @@ namespace SchedulingApp
     {
         private static readonly string server = "localhost";
         private static readonly string database = "client_schedule";
-        private static readonly string uid = "root";
-        private static readonly string password = "";
+        private static readonly string uid = "sqlUser";
+        private static readonly string password = "Passw0rd!";
         private static readonly string connectionString =
             $"SERVER={server};DATABASE={database};UID={uid};PASSWORD={password};";
 
