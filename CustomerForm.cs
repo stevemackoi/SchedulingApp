@@ -167,14 +167,14 @@ namespace SchedulingApp
                                 SET address = @address, 
                                     phone = @phone,
                                     lastUpdate = NOW(),
-                                    lastUpdateBy = @addressUpdateBy
+                                    lastUpdateBy = 'test'
                                 WHERE addressId = @addressId";
 
                             var addressCmd = new MySqlCommand(updateAddressSQL, conn);
                             addressCmd.Parameters.AddWithValue("@address", txtAddress.Text.Trim());
                             addressCmd.Parameters.AddWithValue("@phone", txtPhone.Text.Trim());
                             addressCmd.Parameters.AddWithValue("@addressId", selectedCustomer.AddressId);
-                            addressCmd.Parameters.AddWithValue("@addressUpdateBy", "test");
+                            //addressCmd.Parameters.AddWithValue("@addressUpdateBy", "test");
                             addressCmd.ExecuteNonQuery();
 
                             // Update customer
@@ -182,13 +182,13 @@ namespace SchedulingApp
                                 UPDATE customer 
                                 SET customerName = @name,
                                     lastUpdate = NOW(),
-                                    lastUpdateBy = @customerUpdateBy
+                                    lastUpdateBy = 'test'
                                 WHERE customerId = @customerId";
 
                             var customerCmd = new MySqlCommand(updateCustomerSQL, conn);
                             customerCmd.Parameters.AddWithValue("@name", txtName.Text.Trim());
                             customerCmd.Parameters.AddWithValue("@customerId", selectedCustomer.CustomerId);
-                            addressCmd.Parameters.AddWithValue("@customerUpdateBy", "test");
+                            //addressCmd.Parameters.AddWithValue("@customerUpdateBy", "test");
                             customerCmd.ExecuteNonQuery();
 
                             transaction.Commit();
