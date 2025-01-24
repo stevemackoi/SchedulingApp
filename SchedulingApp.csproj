@@ -153,6 +153,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="TimeZoneHelper.cs" />
+    <EmbeddedResource Include="CalendarView.resx">
+      <DependentUpon>CalendarView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="LoginForm.resx">
       <DependentUpon>LoginForm.cs</DependentUpon>
     </EmbeddedResource>

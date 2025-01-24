@@ -47,8 +47,8 @@
             // 
             this.appointmentGrid.AllowUserToAddRows = false;
             this.appointmentGrid.AllowUserToDeleteRows = false;
-            this.appointmentGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.appointmentGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.appointmentGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.appointmentGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -66,13 +66,13 @@
             this.selectedDateLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.selectedDateLabel.Location = new System.Drawing.Point(18, 220);
             this.selectedDateLabel.Name = "selectedDateLabel";
-            this.selectedDateLabel.Size = new System.Drawing.Size(126, 20);
+            this.selectedDateLabel.Size = new System.Drawing.Size(119, 20);
             this.selectedDateLabel.TabIndex = 2;
             this.selectedDateLabel.Text = "Selected Date: ";
             // 
             // ViewToggleButton
             // 
-            this.ViewToggleButton.Location = new System.Drawing.Point(350, 190);
+            this.ViewToggleButton.Location = new System.Drawing.Point(18, 181);
             this.ViewToggleButton.Name = "ViewToggleButton";
             this.ViewToggleButton.Size = new System.Drawing.Size(120, 25);
             this.ViewToggleButton.TabIndex = 3;
