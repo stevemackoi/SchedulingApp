@@ -7,6 +7,8 @@ namespace SchedulingApp
 {
     public partial class CalendarView : Form
     {
+        private bool isMonthView = false;
+
         public CalendarView()
         {
             InitializeComponent();
@@ -24,7 +26,6 @@ namespace SchedulingApp
         private void monthCalendar_DateChanged(object sender, DateRangeEventArgs e)
         {
             LoadAppointments(e.Start);
-            selectedDateLabel.Text = $"Appointments for {e.Start.ToLongDateString()}";
         }
 
         private void LoadAppointments(DateTime date)
@@ -33,23 +34,52 @@ namespace SchedulingApp
             {
                 using (var connection = DBConnection.GetConnection())
                 {
-                    string query = @"
-                        SELECT 
-                            a.appointmentId,
-                            c.customerName,
-                            a.title,
-                            a.description,
-                            a.location,
-                            a.type,
-                            a.start,
-                            a.end
-                        FROM appointment a
-                        JOIN customer c ON a.customerId = c.customerId
-                        WHERE DATE(a.start) = @date
-                        ORDER BY a.start";
+                    string query;
+                    MySqlCommand cmd;
 
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    cmd.Parameters.AddWithValue("@date", date.Date);
+                    if (isMonthView)
+                    {
+                        // Monthly view query
+                        query = @"
+                            SELECT 
+                                a.appointmentId,
+                                c.customerName,
+                                a.title,
+                                a.description,
+                                a.location,
+                                a.type,
+                                a.start,
+                                a.end
+                            FROM appointment a
+                            JOIN customer c ON a.customerId = c.customerId
+                            WHERE MONTH(a.start) = @month AND YEAR(a.start) = @year
+                            ORDER BY a.start";
+
+                        cmd = new MySqlCommand(query, connection);
+                        cmd.Parameters.AddWithValue("@month", date.Month);
+                        cmd.Parameters.AddWithValue("@year", date.Year);
+                    }
+                    else
+                    {
+                        // Daily view query
+                        query = @"
+                            SELECT 
+                                a.appointmentId,
+                                c.customerName,
+                                a.title,
+                                a.description,
+                                a.location,
+                                a.type,
+                                a.start,
+                                a.end
+                            FROM appointment a
+                            JOIN customer c ON a.customerId = c.customerId
+                            WHERE DATE(a.start) = @date
+                            ORDER BY a.start";
+
+                        cmd = new MySqlCommand(query, connection);
+                        cmd.Parameters.AddWithValue("@date", date.Date);
+                    }
 
                     DataTable dt = new DataTable();
                     connection.Open();
@@ -77,6 +107,11 @@ namespace SchedulingApp
                         appointmentGrid.Columns["start"].DefaultCellStyle.Format = "g";
                         appointmentGrid.Columns["end"].DefaultCellStyle.Format = "g";
                     }
+
+                    // Update label to reflect current view
+                    selectedDateLabel.Text = isMonthView
+                        ? $"Appointments for {date:MMMM yyyy}"
+                        : $"Appointments for {date.ToLongDateString()}";
                 }
             }
             catch (Exception ex)
@@ -84,6 +119,15 @@ namespace SchedulingApp
                 MessageBox.Show($"Error loading appointments: {ex.Message}",
                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void ViewToggleButton_Click(object sender, EventArgs e)
+        {
+            // Toggle view mode
+            isMonthView = !isMonthView;
+
+            // Reload appointments in the new view mode
+            LoadAppointments(monthCalendar.SelectionStart);
         }
 
         private void appointmentGrid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
