@@ -20,8 +20,11 @@ namespace SchedulingApp
 
         private void InitializeLanguageSettings()
         {
-            // Get system language or default to English
-            currentCulture = CultureInfo.CurrentUICulture;
+            // Detect system language, but allow manual override
+            currentCulture = CultureInfo.CurrentUICulture.Name.StartsWith("es")
+                ? new CultureInfo("es-ES")
+                : new CultureInfo("en-US");
+            Thread.CurrentThread.CurrentUICulture = currentCulture;
             UpdateUILanguage();
         }
 
@@ -57,15 +60,10 @@ namespace SchedulingApp
 
         private void btnToggleLanguage_Click(object sender, EventArgs e)
         {
-            // Toggle between English and Spanish
-            if (currentCulture.Name.StartsWith("es"))
-            {
-                currentCulture = new CultureInfo("en-US");
-            }
-            else
-            {
-                currentCulture = new CultureInfo("es-ES");
-            }
+            // Manual language toggle remains unchanged
+            currentCulture = currentCulture.Name.StartsWith("es")
+                ? new CultureInfo("en-US")
+                : new CultureInfo("es-ES");
 
             Thread.CurrentThread.CurrentUICulture = currentCulture;
             UpdateUILanguage();
