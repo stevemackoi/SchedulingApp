@@ -20,10 +20,14 @@ namespace SchedulingApp
 
         private void InitializeLanguageSettings()
         {
-            // Detect system language, but allow manual override
-            currentCulture = CultureInfo.CurrentUICulture.Name.StartsWith("es")
+            // Detect language based on user's time zone
+            string timeZoneId = TimeZoneHelper.UserTimeZone.Id;
+
+            // Default to English, with Spanish for specific time zones
+            currentCulture = timeZoneId.Contains("ES") || timeZoneId.Contains("es")
                 ? new CultureInfo("es-ES")
                 : new CultureInfo("en-US");
+
             Thread.CurrentThread.CurrentUICulture = currentCulture;
             UpdateUILanguage();
         }
@@ -60,7 +64,7 @@ namespace SchedulingApp
 
         private void btnToggleLanguage_Click(object sender, EventArgs e)
         {
-            // Manual language toggle remains unchanged
+            // Manual language toggle
             currentCulture = currentCulture.Name.StartsWith("es")
                 ? new CultureInfo("en-US")
                 : new CultureInfo("es-ES");
