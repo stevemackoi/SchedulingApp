@@ -6,6 +6,7 @@
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
+        private System.Windows.Forms.Button ViewToggleButton;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -31,6 +32,7 @@
             this.monthCalendar = new System.Windows.Forms.MonthCalendar();
             this.appointmentGrid = new System.Windows.Forms.DataGridView();
             this.selectedDateLabel = new System.Windows.Forms.Label();
+            this.ViewToggleButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.appointmentGrid)).BeginInit();
             this.SuspendLayout();
             // 
@@ -68,11 +70,22 @@
             this.selectedDateLabel.TabIndex = 2;
             this.selectedDateLabel.Text = "Selected Date: ";
             // 
+            // ViewToggleButton
+            // 
+            this.ViewToggleButton.Location = new System.Drawing.Point(350, 190);
+            this.ViewToggleButton.Name = "ViewToggleButton";
+            this.ViewToggleButton.Size = new System.Drawing.Size(120, 25);
+            this.ViewToggleButton.TabIndex = 3;
+            this.ViewToggleButton.Text = "Toggle Day/Month";
+            this.ViewToggleButton.UseVisualStyleBackColor = true;
+            this.ViewToggleButton.Click += new System.EventHandler(this.ViewToggleButton_Click);
+            // 
             // CalendarView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 550);
+            this.Controls.Add(this.ViewToggleButton);
             this.Controls.Add(this.selectedDateLabel);
             this.Controls.Add(this.appointmentGrid);
             this.Controls.Add(this.monthCalendar);
