@@ -30,6 +30,8 @@ namespace SchedulingApp
 
             Thread.CurrentThread.CurrentUICulture = currentCulture;
             UpdateUILanguage();
+
+            MessageBox.Show($"Time Zone: {timeZoneId}\nCulture: {currentCulture.Name}\nLocation: {TimeZoneHelper.GetUserLocation()}");
         }
 
         private void DisplayTimeZoneInfo()
